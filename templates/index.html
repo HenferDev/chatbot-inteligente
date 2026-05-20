@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Don Nicolás Coffee Shop</title>
+
+    <style>
+
+        body{
+            margin:0;
+            padding:0;
+            background:#f5efe6;
+            font-family: Arial, sans-serif;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .contenedor{
+
+            width:420px;
+            background:#fffaf5;
+            border-radius:20px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.15);
+            overflow:hidden;
+            border:1px solid #e2d3c2;
+
+        }
+
+        .header{
+
+            background:#b08968;
+            color:white;
+            padding:20px;
+            text-align:center;
+
+        }
+
+        .header h1{
+
+            margin:0;
+            font-size:22px;
+
+        }
+
+        .header p{
+
+            margin-top:8px;
+            font-size:14px;
+            color:#f7ede2;
+
+        }
+
+        #chat{
+
+            height:420px;
+            padding:15px;
+            overflow-y:scroll;
+            background:#f8f4ef;
+
+        }
+
+        .usuario{
+
+            background:#d4a373;
+            color:white;
+            padding:12px;
+            border-radius:15px;
+            margin:10px 0;
+            width:fit-content;
+            margin-left:auto;
+            max-width:75%;
+
+        }
+
+        .bot{
+
+            background:#ede0d4;
+            color:#5c4033;
+            padding:12px;
+            border-radius:15px;
+            margin:10px 0;
+            width:fit-content;
+            max-width:75%;
+
+        }
+
+        .entrada{
+
+            display:flex;
+            padding:15px;
+            background:#fffaf5;
+            border-top:1px solid #e6d5c3;
+
+        }
+
+        input{
+
+            flex:1;
+            padding:12px;
+            border:1px solid #d6c1ab;
+            border-radius:10px;
+            outline:none;
+            font-size:15px;
+
+        }
+
+        button{
+
+            margin-left:10px;
+            padding:12px 18px;
+            border:none;
+            background:#b08968;
+            color:white;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:15px;
+
+        }
+
+        button:hover{
+
+            background:#9c6644;
+
+        }
+
+        .instagram{
+
+            text-align:center;
+            padding:10px;
+            font-size:13px;
+            color:#7f5539;
+            background:#f5ebe0;
+
+        .hora{
+
+    font-size:11px;
+    margin-top:5px;
+    opacity:0.7;
+    text-align:right;
+
+
+
+        }
+    }
+    .logo{
+
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:10px;
+    border:3px solid rgba(255,255,255,0.3);
+
+}
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="header">
+        <img src="/static/logo.jpg" class="logo">
+
+        <h1> Don Nicolás Coffee Shop</h1>
+
+        <p>
+            La esquina de buen café en el centro histórico de Esquipulas
+        </p>
+
+    </div>
+
+    <div id="chat">
+
+        <div class="bot">
+
+            ¡Hola! 👋<br><br>
+
+            Bienvenido a Don Nicolás Coffee Shop.<br>
+
+            Estoy aquí para ayudarte ☕
+
+        </div>
+
+    </div>
+
+    <div class="entrada">
+
+        <input
+            type="text"
+            id="mensaje"
+            placeholder="Escribe un mensaje..."
+        >
+
+        <button onclick="enviarMensaje()">
+            Enviar
+        </button>
+
+    </div>
+
+    <div class="instagram">
+
+        Instagram: @donnicolascoffeeshop
+
+    </div>
+
+</div>
+
+<script>
+
+async function enviarMensaje(){
+
+    let mensaje = document.getElementById("mensaje").value;
+
+    if(mensaje == ""){
+        return;
+    }
+
+    let chat = document.getElementById("chat");
+
+    // MENSAJE DEL USUARIO
+
+    let hora = new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+});
+
+chat.innerHTML += `
+    <div class="usuario">
+        ${mensaje}
+        <div class="hora">${hora}</div>
+    </div>
+`;
+
+    chat.scrollTop = chat.scrollHeight;
+
+    // LIMPIAR INPUT
+
+    document.getElementById("mensaje").value = "";
+
+    // BOT ESCRIBIENDO...
+
+    chat.innerHTML += `
+        <div class="bot" id="escribiendo">
+            Escribiendo...
+        </div>
+    `;
+
+    chat.scrollTop = chat.scrollHeight;
+
+    // PEQUEÑA PAUSA
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // PETICIÓN A FLASK
+
+    const respuesta = await fetch("/chat", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+            mensaje: mensaje
+        })
+
+    });
+
+    const datos = await respuesta.json();
+
+    // ELIMINAR "ESCRIBIENDO..."
+
+    document.getElementById("escribiendo").remove();
+
+    // RESPUESTA DEL BOT
+
+    chat.innerHTML += `
+    <div class="bot">
+        ${datos.respuesta}
+        <div class="hora">${hora}</div>
+    </div>
+`;
+
+    chat.scrollTop = chat.scrollHeight;
+
+}
+
+// ENTER PARA ENVIAR
+
+document.getElementById("mensaje")
+.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        enviarMensaje();
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
