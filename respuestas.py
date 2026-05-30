@@ -1,72 +1,202 @@
+from datetime import datetime
 import random
 
 def responder(mensaje):
 
-    mensaje = mensaje.lower()
+    mensaje = mensaje.lower().strip()
 
-    saludos = [
-        "¡Hola! ☕ Bienvenido a Don Nicolás Coffee Shop.",
-        "Hola 👋 ¿En qué podemos ayudarte hoy?",
-        "¡Qué gusto verte en Don Nicolás Coffee Shop ☕!"
+    recomendaciones = [
+        "Te recomendamos nuestro Cappuccino, es una de las bebidas favoritas de nuestros clientes.",
+        "Si buscas algo refrescante, puedes probar nuestro Cold Brew.",
+        "Nuestro Latte es una excelente opción si prefieres un café suave y equilibrado.",
+        "El Mocca combina perfectamente el sabor del café con el chocolate.",
+        "El Iced Nikko Latte es una bebida muy popular durante los días calurosos."
     ]
 
     despedidas = [
-        "¡Gracias por visitarnos ☕!",
-        "Esperamos verte pronto en Don Nicolás Coffee Shop 👋",
-        "¡Que tengas un excelente día!"
+        "Gracias por visitarnos. Esperamos atenderte pronto.",
+        "Será un gusto recibirte nuevamente en Don Nicolás Coffee Shop.",
+        "Que tengas un excelente día."
     ]
 
-    recomendaciones = [
-        "Te recomendamos nuestro Cappuccino de especialidad ☕",
-        "Nuestro Cold Brew Berries es uno de los favoritos 🫐",
-        "El Cold Brew artesanal es perfecto si deseas algo refrescante 😎"
-        ""
-    ]
+    # SALUDOS
 
-    if any(palabra in mensaje for palabra in ['hola', 'buenas', 'hey', 'buen', 'buenos']):
-        return random.choice(saludos)
+    if any(palabra in mensaje for palabra in [
+        "hola",
+        "buenas",
+        "hey",
+        "saludos"
+    ]):
 
-    elif 'menu' in mensaje or 'menú' in mensaje:
+        hora = datetime.now().hour
+
+        if hora < 12:
+            saludo = "Buenos días."
+        elif hora < 18:
+            saludo = "Buenas tardes."
+        else:
+            saludo = "Buenas noches."
+
+        return f"{saludo} Bienvenido a Don Nicolás Coffee Shop. Puedo ayudarte con información sobre menú, horarios, ubicación, recomendaciones y contacto."
+
+    # MENÚ
+
+    elif any(palabra in mensaje for palabra in [
+        "menu",
+        "menú",
+        "bebidas",
+        "comida",
+        "comidas",
+        "productos",
+        "que venden",
+        "qué venden"
+    ]):
 
         return """
-☕ MENÚ DON NICOLÁS
+Puedes consultar nuestro menú completo aquí:
 
-• Espresso
-• Cortado 
-• Cappuccino
-• Latte
-• Mocca
-• Cold Brew
-• Iced Nikko Latte
+<a href="/static/Menu.pdf" target="_blank">Ver menú</a>
 """
 
-    elif  "horario" in mensaje or "abren" in mensaje or "abierto" in mensaje:
+    # HORARIOS
 
-        return " Nuestro horario es de 7 AM a 9 PM. ¡Será un gusto atenderte."
+    elif any(palabra in mensaje for palabra in [
+        "horario",
+        "horarios",
+        "abren",
+        "abierto",
+        "cierran"
+    ]):
 
-    elif "ubicacion" in mensaje or "ubicación" in mensaje or "donde" in mensaje or "ubicados" in mensaje:
+        return "Nuestro horario de atención es de lunes a domingo de 7:00 AM a 9:00 PM."
 
-        return "📍 Estamos ubicados en el centro histórico de Esquipulas, en 1. Calle 3-01, será un gusto atenderte."
+    # UBICACIÓN
 
-    elif "instagram" in mensaje or "redes" in mensaje:
+    elif any(palabra in mensaje for palabra in [
+        "ubicacion",
+        "ubicación",
+        "donde",
+        "dónde",
+        "ubicados"
+    ]):
 
-        return "📸 Síguenos en Instagram: @donnicolascoffeeshop"
+        return "Estamos ubicados en 1 Calle 3-01, Centro Histórico de Esquipulas."
 
-    elif "recomendacion" in mensaje or "recomiendame" in mensaje or "recomiéndame" in mensaje or "recomiendas" in mensaje  or "recomienda" in mensaje or "otra"  in mensaje:
+    # PRECIOS
 
-        return random.choice(recomendaciones)
+    elif any(palabra in mensaje for palabra in [
+        "precio",
+        "precios",
+        "cuanto cuesta",
+        "cuánto cuesta",
+        "coste"
+    ]):
+
+        return "Contamos con diferentes precios según la bebida. Puedes consultarlos directamente en nuestra cafetería o mediante WhatsApp."
+
+    # INSTAGRAM
+
+    elif "instagram" in mensaje:
+
+        return "Puedes encontrarnos en Instagram como @donnicolascoffeeshop."
+
+    # FACEBOOK
+
+    elif "facebook" in mensaje:
+
+        return "Puedes encontrarnos en Facebook como Don Nicolás Coffee Shop."
+
+    # WHATSAPP / CONTACTO
+
+    elif any(palabra in mensaje for palabra in [
+        "whatsapp",
+        "numero",
+        "número",
+        "telefono",
+        "teléfono",
+        "contacto",
+        "celular"
+    ]):
+
+        return "Puedes comunicarte con nosotros mediante WhatsApp al número +502 5433-2402 o utilizando el botón disponible en esta página."
+
+    # WIFI
 
     elif "wifi" in mensaje:
 
-        return "📶 Sí contamos con WiFi para nuestros clientes."
+        return "Sí, contamos con servicio de WiFi para nuestros clientes."
 
-    elif "gracias" in mensaje:
+    # RECOMENDACIONES
 
-        return "☕ ¡Con mucho gusto!"
+    elif any(palabra in mensaje for palabra in [
+        "recomendacion",
+        "recomendación",
+        "recomiendame",
+        "recomiéndame",
+        "recomienda",
+        "recomiendas",
+        "que tomo",
+        "qué tomo",
+        "algo para tomar",
+        "recomendarme"
+    ]):
 
-    elif any(palabra in mensaje for palabra in ["adios", "adiós", "bye"]):
+        return random.choice(recomendaciones)
+
+    # INTENCIÓN DE COMPRA
+
+    elif any(palabra in mensaje for palabra in [
+        "comprar",
+        "pedido",
+        "pedir",
+        "ordenar",
+        "orden",
+        "quiero un",
+        "quiero una",
+        "me vende",
+        "vender"
+    ]):
+
+        return "Gracias por tu interés. Actualmente este chatbot funciona como asistente informativo. Para realizar pedidos o recibir atención personalizada puedes comunicarte mediante nuestro WhatsApp."
+
+    # CAFÉ
+
+    elif "cafe" in mensaje or "café" in mensaje:
+
+        return "Nos especializamos en bebidas a base de café preparadas cuidadosamente para brindar una experiencia única a nuestros clientes."
+
+    # QUIÉN ERES
+
+    elif "quien eres" in mensaje or "quién eres" in mensaje:
+
+        return "Soy el asistente virtual de Don Nicolás Coffee Shop. Estoy aquí para ayudarte con información sobre nuestros productos y servicios."
+
+    # GRACIAS
+
+    elif any(palabra in mensaje for palabra in [
+        "gracias",
+        "muchas gracias",
+        "te agradezco"
+    ]):
+
+        return "Con mucho gusto. Estoy para ayudarte."
+
+    # DESPEDIDAS
+
+    elif any(palabra in mensaje for palabra in [
+        "adios",
+        "adiós",
+        "bye",
+        "hasta luego",
+        "nos vemos",
+        "chao",
+        "chau"
+    ]):
+
         return random.choice(despedidas)
+
+    # RESPUESTA POR DEFECTO
 
     else:
 
-        return "☕ Lo siento, aún estoy aprendiendo. ¿Puedes escribir tu consulta de otra manera?"
+        return "No logré comprender tu consulta. Puedes preguntarme sobre menú, horarios, ubicación, recomendaciones, redes sociales o WhatsApp."
